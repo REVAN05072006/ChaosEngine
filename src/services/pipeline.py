@@ -3,7 +3,10 @@ import pandas as pd
 from src.data.loader import load_dataset
 from src.data.preprocessing import prepare_features, scale_features
 from src.data.splitter import split_data
-from src.evaluation.metrics import calculate_metrics
+from src.evaluation.metrics import (
+    calculate_classification_metrics,
+    calculate_metrics,
+)
 from src.models.model_factory import ModelFactory
 from src.services.trainer import Trainer
 
@@ -64,10 +67,16 @@ class Pipeline:
         predictions = trained_model.predict(X_test_scaled)
 
         # 8. Evaluate model
-        metrics = calculate_metrics(
-            y_test,
-            predictions,
-        )
+        if self.model_name == "logistic_regression":
+            metrics = calculate_classification_metrics(
+                y_test,
+                predictions,
+            )
+        else:
+            metrics = calculate_metrics(
+                y_test,
+                predictions,
+            )
 
         return {
             "model": trained_model,
